@@ -1,11 +1,13 @@
+const mongoose = require("mongoose");
 const config = require("config");
-
-const ENVIRONMENT = config.get("NODE_ENV");
+const chalk = require("chalk");
 
 const connectToDb = () => {
-  if (ENVIRONMENT === "development")
-    require("./mongodb/connectToMongodbLocally");
-  if (ENVIRONMENT === "production") require("./mongodb/connectToAtlas");
+  if (mongoose.connection.readyState === 0) {
+    console.log(chalk.green("MongoDB connection is not active"));
+  } else {
+    console.log(chalk.green("MongoDB connection is active"));
+  }
 };
 
 module.exports = connectToDb;

@@ -14,6 +14,9 @@ const {
 } = require("./initialData/initialDataService");
 const mongoose = require("mongoose");
 
+// Server start
+const PORT = process.env.PORT || config.get("PORT") || 8181;
+
 // Middleware
 app.use(cors);
 app.use(logger);
@@ -27,20 +30,23 @@ app.use((err, req, res, next) => {
 });
 
 // MongoDB connection
-mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log(chalk.green("Connected to MongoDB")))
-  .catch((err) => console.log(chalk.red("Failed to connect to MongoDB", err)));
+if (mongoose.connection.readyState === 0) {
+  console.log(process.env.MONGO_URI);
+  mongoose
+    .connect(process.env.MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    })
+    .then(() => {
+      console.log(chalk.green("Connected to MongoDB"));
+      app.listen(PORT, () => {
+        console.log(chalk.blueBright(`Listening on: http://localhost:${PORT}`));
+      });
 
-// Server start
-const PORT = config.get("PORT") || process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-  console.log(chalk.blueBright(`Listening on: http://localhost:${PORT}`));
-  connectToDb();
-  generateInitialCards();
-  generateInitialUsers();
-});
+      generateInitialCards();
+      generateInitialUsers();
+    })
+    .catch((err) =>
+      console.log(chalk.red("Failed to connect to MongoDB", err))
+    );
+}

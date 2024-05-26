@@ -4,6 +4,7 @@ const express = require("express");
 const { handleError } = require("./utils/handleErrors");
 const app = express();
 const router = require("./router/router");
+const userRouter = require("./users/routes/usersRestController");
 const cors = require("./middlewares/cors");
 const logger = require("./logger/loggerService");
 const config = require("config");
@@ -22,6 +23,7 @@ app.use(logger);
 app.use(express.json());
 app.use(express.static("./public"));
 app.use(router);
+app.use("/api/users", userRouter); // ודא שהנתיב מתאים לאפליקציה שלך
 
 // Error handling middleware
 app.use((err, req, res, next) => {

@@ -25,6 +25,19 @@ const registerUser = async (normalizedUser) => {
   return Promise.resolve("registerUser new user not in mongodb");
 };
 
+const findUserByEmail = async (email) => {
+  if (DB === "MONGODB") {
+    try {
+      const user = await User.findOne({ email });
+      return Promise.resolve(user);
+    } catch (error) {
+      error.status = 404;
+      return Promise.reject(error);
+    }
+  }
+  return Promise.resolve("findUserByEmail not in mongodb");
+};
+
 const loginUser = async ({ email, password }) => {
   if (DB === "MONGODB") {
     try {
@@ -113,6 +126,7 @@ const deleteUser = async (userId) => {
 };
 
 exports.registerUser = registerUser;
+exports.findUserByEmail = findUserByEmail;
 exports.loginUser = loginUser;
 exports.getUsers = getUsers;
 exports.getUser = getUser;

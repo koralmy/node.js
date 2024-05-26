@@ -11,6 +11,7 @@ const {
   updateUser,
   changeUserBusinessStatus,
   deleteUser,
+  findUserByEmail, // הוספת הפונקציה הנכונה
 } = require("../models/usersAccessDataService");
 
 const {
@@ -28,7 +29,7 @@ router.post("/", async (req, res) => {
       return handleError(res, 400, `Joi Error: ${error.details[0].message}`);
 
     // Validate if user already exists
-    const existingUser = await getUserByEmail(user.email);
+    const existingUser = await findUserByEmail(user.email); // שינוי לפונקציה הנכונה
     if (existingUser) {
       return handleError(res, 400, "User already exists");
     }

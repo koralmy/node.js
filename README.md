@@ -2,27 +2,6 @@
 
 This project is a web application built using Node.js and Express, designed to manage users and cards. The application includes authentication, user management, and card management functionalities. The data is stored in a MongoDB database, and the application follows RESTful principles.
 
-## important!!
-
-## Environment Variables
-
-Create an .env file and put the following content in it in order to run the project:
-
-```
-# MongoDB connection string
-MONGO_URI=mongodb://127.0.0.1:27017/business-card-app
-
-
-# JWT Secret
-JWT_SECRET=1234
-
-# Node environment
-NODE_ENV=development
-
-# Port
-PORT=8181
-```
-
 ## Technologies Used
 
 - **Node.js**: JavaScript runtime built on Chrome's V8 JavaScript engine.
@@ -50,9 +29,21 @@ To get the project up and running, follow these steps:
    ```
 
 3. **Create a .env file** in the root directory of the project and add the following content:
-   ```
 
-   ```
+```
+  # MongoDB connection string
+  MONGO_URI=mongodb://127.0.0.1:27017/business-card-app
+
+
+  # JWT Secret
+  JWT_SECRET=1234
+
+  # Node environment
+  NODE_ENV=development
+
+  # Port8181
+  PORT=
+```
 
 # MongoDB connection string
 
@@ -69,12 +60,13 @@ NODE_ENV=development
 # Port
 
 PORT=8181
-```
+
+````
 
 4. **Start the server**:
    ```sh
    npm start
-   ```
+````
 
 The server should now be running on `http://localhost:8181`.
 
@@ -115,4 +107,4 @@ This project is licensed under the MIT License.
 
 ## Contact
 
-For any inquiries, please contact [Your Name] at [your-email@example.com].
+For any inquiries, please contact me at koralstudent@gmail.com.

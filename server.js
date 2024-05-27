@@ -13,6 +13,9 @@ const {
 } = require("./initialData/initialDataService");
 const mongoose = require("mongoose");
 
+// Set strictQuery to true or false based on your preference
+mongoose.set("strictQuery", true); // או mongoose.set('strictQuery', false);
+
 // Server start
 const PORT = process.env.PORT || config.get("PORT") || 8181;
 
@@ -32,10 +35,7 @@ app.use((err, req, res, next) => {
 if (mongoose.connection.readyState === 0) {
   console.log(process.env.MONGO_URI);
   mongoose
-    .connect(process.env.MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    })
+    .connect(process.env.MONGO_URI)
     .then(() => {
       console.log(chalk.green("Connected to MongoDB"));
       app.listen(PORT, () => {

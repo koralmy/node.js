@@ -14,50 +14,42 @@ const { generateUserPassword } = require("../users/helpers/bcrypt");
 
 const generateInitialCards = async () => {
   const { cards } = data;
-  cards.forEach(async (card) => {
+  for (const card of cards) {
     try {
       const userId = "6376274068d78742d84f31d2";
-      card = await normalizeCard(card, userId);
+      const normalizedCard = await normalizeCard(card, userId);
 
       // Check if card already exists
-      const existingCard = await findCardByEmail(card.email);
+      const existingCard = await findCardByEmail(normalizedCard.email);
       if (existingCard) {
-        console.log(
-          chalk.yellow(`Card with email ${card.email} already exists`)
-        );
-        return;
+        continue; // Skip if card already exists
       }
 
-      await createCard(card);
-      return;
+      await createCard(normalizedCard);
     } catch (error) {
-      return console.log(chalk.redBright(error.message));
+      console.log(chalk.redBright(error.message));
     }
-  });
+  }
 };
 
 const generateInitialUsers = async () => {
   const { users } = data;
-  users.forEach(async (user) => {
+  for (const user of users) {
     try {
-      user = await normalizeUser(user);
-      user.password = generateUserPassword(user.password);
+      const normalizedUser = await normalizeUser(user);
+      normalizedUser.password = generateUserPassword(normalizedUser.password);
 
       // Check if user already exists
-      const existingUser = await findUserByEmail(user.email);
+      const existingUser = await findUserByEmail(normalizedUser.email);
       if (existingUser) {
-        console.log(
-          chalk.yellow(`User with email ${user.email} already exists`)
-        );
-        return;
+        continue; // Skip if user already exists
       }
 
-      await registerUser(user);
-      return;
+      await registerUser(normalizedUser);
     } catch (error) {
-      return console.log(chalk.redBright(error.message));
+      console.log(chalk.redBright(error.message));
     }
-  });
+  }
 };
 
 exports.generateInitialCards = generateInitialCards;

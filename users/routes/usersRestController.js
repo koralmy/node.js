@@ -1,6 +1,13 @@
 const express = require("express");
-const auth = require("../../auth/authService");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const User = require("../models/mongodb/User");
 const { handleError } = require("../../utils/handleErrors");
+const {
+  validateLogin,
+  validateRegistration,
+  validateUserUpdate,
+} = require("../validations/userValidationService");
 const { generateUserPassword } = require("../helpers/bcrypt");
 const normalizeUser = require("../helpers/normalizeUser");
 const {
@@ -11,15 +18,39 @@ const {
   updateUser,
   changeUserBusinessStatus,
   deleteUser,
-  findUserByEmail, // הוספת הפונקציה הנכונה
+  findUserByEmail,
 } = require("../models/usersAccessDataService");
 
-const {
-  validateRegistration,
-  validateLogin,
-  validateUserUpdate,
-} = require("../validations/userValidationService");
+const auth = require("../../auth/authService");
+
 const router = express.Router();
+
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const { error } = validateLogin(req.body);
+    if (error)
+      return handleError(res, 400, `Joi Error: ${error.details[0].message}`);
+
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).send("Invalid email or password.");
+
+    const validPassword = await bcrypt.compare(password, user.password);
+    if (!validPassword)
+      return res.status(400).send("Invalid email or password.");
+
+    const token = jwt.sign(
+      { _id: user._id, isBusiness: user.isBusiness, isAdmin: user.isAdmin },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+    console.log("Generated token:", token);
+    res.send({ token });
+  } catch (error) {
+    handleError(res, 500, "Server Error");
+  }
+});
 
 router.post("/", async (req, res) => {
   try {
@@ -29,7 +60,7 @@ router.post("/", async (req, res) => {
       return handleError(res, 400, `Joi Error: ${error.details[0].message}`);
 
     // Validate if user already exists
-    const existingUser = await findUserByEmail(user.email); // שינוי לפונקציה הנכונה
+    const existingUser = await findUserByEmail(user.email);
     if (existingUser) {
       return handleError(res, 400, "User already exists");
     }
@@ -39,20 +70,6 @@ router.post("/", async (req, res) => {
 
     user = await registerUser(user);
     return res.status(201).send(user);
-  } catch (error) {
-    return handleError(res, error.status || 500, error.message);
-  }
-});
-
-router.post("/login", async (req, res) => {
-  try {
-    let user = req.body;
-    const { error } = validateLogin(user);
-    if (error)
-      return handleError(res, 400, `Joi Error: ${error.details[0].message}`);
-
-    const token = await loginUser(req.body);
-    return res.send(token);
   } catch (error) {
     return handleError(res, error.status || 500, error.message);
   }

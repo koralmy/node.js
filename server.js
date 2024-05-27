@@ -1,6 +1,6 @@
 require("dotenv").config();
-const chalk = require("chalk");
 const express = require("express");
+const chalk = require("chalk");
 const { handleError } = require("./utils/handleErrors");
 const app = express();
 const router = require("./router/router");

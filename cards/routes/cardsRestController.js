@@ -48,18 +48,25 @@ router.post("/", auth, async (req, res) => {
     let card = req.body;
     const user = req.user;
 
-    if (!user.isBusiness)
+    console.log("User info:", user);
+
+    if (!user.isBusiness) {
+      console.log("User is not a business user");
       return handleError(res, 403, "Authentication Error: Unauthorize user");
+    }
 
     const { error } = validateCard(card);
-    if (error)
+    if (error) {
+      console.log("Validation error:", error.details[0].message);
       return handleError(res, 400, `Joi Error: ${error.details[0].message}`);
+    }
 
     card = await normalizeCard(card, user._id);
 
     card = await createCard(card);
     return res.status(201).send(card);
   } catch (error) {
+    console.log("Error creating card:", error.message);
     return handleError(res, error.status || 500, error.message);
   }
 });
@@ -71,8 +78,7 @@ router.put("/:id", auth, async (req, res) => {
     const userId = req.user._id;
 
     if (userId !== card.user_id) {
-      const message =
-        "Authorization Error: Only the user who created the business card can update its details";
+      const message = "Authorization Error: Only the user who created the business card can update its details";
       return handleError(res, 403, message);
     }
 

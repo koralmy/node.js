@@ -92,10 +92,14 @@ const getUser = async (userId) => {
 const updateUser = async (userId, updatedUser) => {
   if (DB === "MONGODB") {
     try {
-      const user = await User.findByIdAndUpdate(userId, updatedUser, {
-        new: true,
-      });
+      // בדיקה אם כל השדות הנדרשים קיימים
+      if (!updatedUser.name || !updatedUser.name.first || !updatedUser.name.last) {
+        throw new Error("Missing required fields: name.first and name.last are required.");
+      }
+
+      const user = await User.findByIdAndUpdate(userId, updatedUser, { new: true, runValidators: true });
       if (!user) throw new Error("User not found");
+
       return Promise.resolve(user);
     } catch (error) {
       error.status = 400;

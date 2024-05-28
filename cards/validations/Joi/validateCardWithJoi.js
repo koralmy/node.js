@@ -19,25 +19,21 @@ const createCardSchema = Joi.object({
     .pattern(urlRegex)
     .message('card "web" must be a valid url')
     .allow(""),
-  image: Joi.object()
-    .keys({
-      url: Joi.string()
-        .pattern(urlRegex)
-        .message('card.image "url" must be a valid url')
-        .allow(""),
-      alt: Joi.string().min(2).max(256).allow(""),
-    })
-    .required(),
-  address: Joi.object()
-    .keys({
-      state: Joi.string().allow(""),
-      country: Joi.string().required(),
-      city: Joi.string().required(),
-      street: Joi.string().required(),
-      houseNumber: Joi.number().required(),
-      zip: Joi.number(),
-    })
-    .required(),
+  image: Joi.object().keys({
+    url: Joi.string()
+      .pattern(urlRegex)
+      .message('card.image "url" must be a valid url')
+      .allow(""),
+    alt: Joi.string().min(2).max(256).allow(""),
+  }).required(),
+  address: Joi.object().keys({
+    state: Joi.string().allow(""),
+    country: Joi.string().required(),
+    city: Joi.string().required(),
+    street: Joi.string().required(),
+    houseNumber: Joi.number().required(),
+    zip: Joi.number(),
+  }).required(),
   bizNumber: Joi.number().allow(""),
   user_id: Joi.string().allow(""),
 });
@@ -59,26 +55,22 @@ const updateCardSchema = Joi.object({
     .message('card "web" must be a valid url')
     .allow("")
     .optional(),
-  image: Joi.object()
-    .keys({
-      url: Joi.string()
-        .pattern(urlRegex)
-        .message('card.image "url" must be a valid url')
-        .allow("")
-        .optional(),
-      alt: Joi.string().min(2).max(256).allow("").optional(),
-    })
-    .optional(),
-  address: Joi.object()
-    .keys({
-      state: Joi.string().allow("").optional(),
-      country: Joi.string().optional(),
-      city: Joi.string().optional(),
-      street: Joi.string().optional(),
-      houseNumber: Joi.number().optional(),
-      zip: Joi.number().optional(),
-    })
-    .optional(),
+  image: Joi.object().keys({
+    url: Joi.string()
+      .pattern(urlRegex)
+      .message('card.image "url" must be a valid url')
+      .allow("")
+      .optional(),
+    alt: Joi.string().min(2).max(256).allow("").optional(),
+  }).optional(),
+  address: Joi.object().keys({
+    state: Joi.string().allow("").optional(),
+    country: Joi.string().optional(),
+    city: Joi.string().optional(),
+    street: Joi.string().optional(),
+    houseNumber: Joi.number().optional(),
+    zip: Joi.number().optional(),
+  }).optional(),
   bizNumber: Joi.number().allow("").optional(),
   user_id: Joi.string().allow("").optional(),
 });

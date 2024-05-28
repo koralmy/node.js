@@ -89,16 +89,20 @@ const getUser = async (userId) => {
   return Promise.resolve("get user not in mongodb");
 };
 
-const updateUser = async (userId, normalizedUser) => {
+const updateUser = async (userId, updatedUser) => {
   if (DB === "MONGODB") {
     try {
-      return Promise.resolve({ normalizedUser, userId });
+      const user = await User.findByIdAndUpdate(userId, updatedUser, {
+        new: true,
+      });
+      if (!user) throw new Error("User not found");
+      return Promise.resolve(user);
     } catch (error) {
       error.status = 400;
       return Promise.reject(error);
     }
   }
-  return Promise.resolve("card update not in mongodb");
+  return Promise.resolve("User update not supported in non-MongoDB databases");
 };
 
 const changeUserBusinessStatus = async (userId) => {

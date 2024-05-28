@@ -18,8 +18,8 @@ To get the project up and running, follow these steps:
 1. **Clone the repository**:
 
    ```sh
-   git clone <repository-url>
-   cd <repository-directory>
+   git clone https://github.com/koralmy/node.js.git
+   cd node.js
    ```
 
 2. **Install dependencies**:

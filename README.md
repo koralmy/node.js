@@ -65,7 +65,7 @@ PORT=8181
 
 4. **Start the server**:
    ```sh
-   npm start
+   npm rub start
 ````
 
 The server should now be running on `http://localhost:8181`.
@@ -103,9 +103,6 @@ The server should now be running on `http://localhost:8181`.
 - `config/`: Configuration files.
 - `utils/`: Utility functions.
 
-## License
-
-This project is licensed under the MIT License.
 
 ## Contact
 

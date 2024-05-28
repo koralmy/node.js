@@ -108,13 +108,23 @@ const updateUser = async (userId, updatedUser) => {
 const changeUserBusinessStatus = async (userId) => {
   if (DB === "MONGODB") {
     try {
-      return Promise.resolve(`user no. ${userId} change his business status!`);
+      const user = await User.findById(userId);
+      if (!user) throw new Error("User not found");
+
+      console.log(`Current business status: ${user.isBusiness}`);
+      user.isBusiness = !user.isBusiness; // שינוי הסטטוס העסקי
+      await user.save(); // שמירת השינויים במסד הנתונים
+      console.log(`Updated business status: ${user.isBusiness}`);
+
+      return Promise.resolve(user);
     } catch (error) {
       error.status = 400;
       return Promise.reject(error);
     }
   }
-  return Promise.resolve("card liked not in mongodb");
+  return Promise.resolve(
+    "User business status change not supported in non-MongoDB databases"
+  );
 };
 
 const deleteUser = async (userId) => {

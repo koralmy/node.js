@@ -116,13 +116,17 @@ const changeUserBusinessStatus = async (userId) => {
 const deleteUser = async (userId) => {
   if (DB === "MONGODB") {
     try {
-      return Promise.resolve(`user no. ${userId} deleted!`);
+      const user = await User.findByIdAndDelete(userId);
+      if (!user) throw new Error("User not found");
+      return Promise.resolve(`User with id ${userId} deleted!`);
     } catch (error) {
       error.status = 400;
       return Promise.reject(error);
     }
   }
-  return Promise.resolve("card deleted not in mongodb");
+  return Promise.resolve(
+    "User deletion not supported in non-MongoDB databases"
+  );
 };
 
 exports.registerUser = registerUser;

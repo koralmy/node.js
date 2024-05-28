@@ -13,9 +13,6 @@ const {
 } = require("./initialData/initialDataService");
 const mongoose = require("mongoose");
 
-const userRouter = require("./users/routes/usersRestController"); // ייבוא המסלולים של המשתמשים
-const cardRouter = require("./cards/routes/cardsRestController"); // ייבוא המסלולים של הכרטיסים
-
 // Set strictQuery to true or false based on your preference
 mongoose.set("strictQuery", true); // או mongoose.set('strictQuery', false);
 
@@ -28,9 +25,6 @@ app.use(logger);
 app.use(express.json());
 app.use(express.static("./public"));
 app.use(router);
-
-app.use(userRouter); // שימוש במסלולים של המשתמשים
-app.use(cardRouter); // שימוש במסלולים של הכרטיסים
 
 // Error handling middleware
 app.use((err, req, res, next) => {

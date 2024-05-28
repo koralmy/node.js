@@ -70,18 +70,23 @@ const findCardByEmail = async (email) => {
   return Promise.resolve("findCardByEmail not in mongodb");
 };
 
-const updateCard = async (cardId, updatedCard) => {
-  try {
-    const card = await Card.findByIdAndUpdate(cardId, updatedCard, {
-      new: true,
-      runValidators: true,
-    });
-    if (!card) throw new Error("Card not found");
-    return card;
-  } catch (error) {
-    error.status = 400;
-    throw error;
+const updateCard = async (cardId, normalizedCard) => {
+  if (DB === "MONGODB") {
+    try {
+      let card = await Card.findByIdAndUpdate(cardId, normalizedCard, {
+        new: true,
+      });
+
+      if (!card)
+        throw new Error("A card with this ID cannot be found in the database");
+
+      return Promise.resolve(card);
+    } catch (error) {
+      error.status = 400;
+      return handleBadRequest("Mongoose", error);
+    }
   }
+  return Promise.resolve("card updateCard not in mongodb");
 };
 
 const likeCard = async (cardId, userId) => {

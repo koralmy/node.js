@@ -83,6 +83,8 @@ The server should now be running on `http://localhost:8181`.
   - `POST /users`: Register a new user.
   - `PUT /users/:id`: Update a user by ID.
   - `DELETE /users/:id`: Delete a user by ID.
+  - `PATCH /users/:id`: Change status isBusiness .
+
 
 - **Cards**:
   - `GET /cards`: Get all cards.
@@ -90,6 +92,8 @@ The server should now be running on `http://localhost:8181`.
   - `POST /cards`: Create a new card.
   - `PUT /cards/:id`: Update a card by ID.
   - `DELETE /cards/:id`: Delete a card by ID.
+  - `PATCH /cards/:id`: Like a card by user ID.
+
 
 ## Project Structure
 

@@ -65,7 +65,7 @@ PORT=8181
 
 4. **Start the server**:
    ```sh
-   npm rub start
+   npm run dev
 ````
 
 The server should now be running on `http://localhost:8181`.

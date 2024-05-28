@@ -109,6 +109,7 @@ const updateUser = async (userId, updatedUser) => {
   return Promise.resolve("User update not supported in non-MongoDB databases");
 };
 
+
 const changeUserBusinessStatus = async (userId) => {
   if (DB === "MONGODB") {
     try {

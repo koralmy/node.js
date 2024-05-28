@@ -114,13 +114,14 @@ router.get("/:id", auth, async (req, res) => {
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    let user = req.body;
-    const { error } = validateUserUpdate(user);
-    if (error)
-      return handleError(res, 400, `Joi Error: ${error.details[0].message}`);
+    const updatedUser = req.body;
 
-    user = normalizeUser(user);
-    user = await updateUser(id, user);
+    // בדיקה אם כל השדות הנדרשים קיימים
+    if (!updatedUser.name || !updatedUser.name.first || !updatedUser.name.last) {
+      return handleError(res, 400, "Missing required fields: name.first and name.last are required.");
+    }
+
+    const user = await updateUser(id, updatedUser);
     return res.send(user);
   } catch (error) {
     return handleError(res, error.status || 500, error.message);

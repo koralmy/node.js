@@ -11,8 +11,12 @@ const {
   likeCard,
   deleteCard,
 } = require("../models/cardsAccessDataService");
-const validateCard = require("../validations/cardValidationService");
+const {
+  validateCardCreation,
+  validateCardUpdate,
+} = require("../validations/Joi/validateCardWithJoi");
 const router = express.Router();
+const Card = require("../models/mongodb/Card");
 
 router.get("/", async (req, res) => {
   try {
@@ -43,54 +47,50 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post("/", auth, async (req, res) => {
+router.post("/cards", auth, async (req, res) => {
   try {
-    let card = req.body;
-    const user = req.user;
+    const { error } = validateCardCreation(req.body);
+    if (error)
+      return res.status(400).send(`Joi Error: ${error.details[0].message}`);
 
-    console.log("User info:", user);
-
-    if (!user.isBusiness) {
-      console.log("User is not a business user");
-      return handleError(res, 403, "Authentication Error: Unauthorize user");
-    }
-
-    const { error } = validateCard(card);
-    if (error) {
-      console.log("Validation error:", error.details[0].message);
-      return handleError(res, 400, `Joi Error: ${error.details[0].message}`);
-    }
-
-    card = await normalizeCard(card, user._id);
-
-    card = await createCard(card);
-    return res.status(201).send(card);
+    const card = new Card({
+      ...req.body,
+      user_id: req.user._id,
+    });
+    await card.save();
+    res.status(201).send(card);
   } catch (error) {
-    console.log("Error creating card:", error.message);
-    return handleError(res, error.status || 500, error.message);
+    res.status(400).send(error);
   }
 });
 
 router.put("/:id", auth, async (req, res) => {
   try {
-    let card = req.body;
     const cardId = req.params.id;
-    const userId = req.user._id;
+    const userId = req.user._id.toString();
 
-    if (userId !== card.user_id) {
-      const message = "Authorization Error: Only the user who created the business card can update its details";
-      return handleError(res, 403, message);
+    const originalCard = await Card.findById(cardId);
+    if (!originalCard) return res.status(404).send("Card not found");
+
+    if (userId !== originalCard.user_id.toString()) {
+      const message =
+        "Authorization Error: Only the user who created the business card can update its details";
+      return res.status(403).send(message);
     }
 
-    const { error } = validateCard(card);
+    const { error } = validateCardUpdate(req.body);
     if (error)
-      return handleError(res, 400, `Joi Error: ${error.details[0].message}`);
+      return res.status(400).send(`Joi Error: ${error.details[0].message}`);
 
-    card = await normalizeCard(card);
-    card = await updateCard(cardId, card);
-    return res.send(card);
+    const updatedCard = await Card.findByIdAndUpdate(cardId, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    if (!updatedCard) return res.status(404).send("Card not found");
+
+    res.send(updatedCard);
   } catch (error) {
-    return handleError(res, error.status || 500, error.message);
+    res.status(400).send(error);
   }
 });
 

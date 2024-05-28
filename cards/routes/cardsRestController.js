@@ -44,13 +44,14 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post("/cards", auth, async (req, res) => {
+router.post("/", auth, async (req, res) => {
+  // שינוי הנתיב ל "/"
   try {
     const { error } = validateCardWithJoi(req.body);
     if (error)
       return res.status(400).send(`Joi Error: ${error.details[0].message}`);
 
-    const normalizedCard = normalizeCard(req.body, req.user._id);
+    const normalizedCard = await normalizeCard(req.body, req.user._id);
     const card = await createCard(normalizedCard);
     res.status(201).send(card);
   } catch (error) {
